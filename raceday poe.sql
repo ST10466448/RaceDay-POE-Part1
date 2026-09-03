@@ -273,3 +273,49 @@ VALUES
      'Woodstock',
      'Cape Town');
 GO
+
+INSERT INTO EventCategories
+    (EventID, CategoryName, DistanceKM, EntryFee, MaxParticipants)
+VALUES
+    /* Event 1 */
+    (1, '10K Open', 10.00, 150.00, 500),
+    (1, '10K Junior', 10.00, 100.00, 200),
+
+    /* Event 2 */
+    (2, 'Half Marathon Open', 21.10, 250.00, 1000),
+    (2, 'Half Marathon Junior', 21.10, 180.00, 300),
+
+    /* Event 3 */
+    (3, 'Marathon Open', 42.20, 400.00, 1500),
+    (3, 'Marathon Veteran', 42.20, 350.00, 500);
+GO
+
+
+/* =========================================================
+   12. INSERT PARTICIPANT ENTRIES
+   ========================================================= */
+
+INSERT INTO Entries
+    (ParticipantID, CategoryID, EntryDate, EntryStatus, RaceNumber)
+VALUES
+    (3, 1, '2026-08-20 10:15:00', 'Confirmed', 'CT10K001'),
+
+    (3, 3, '2026-08-21 11:30:00', 'Confirmed', 'CTHM001'),
+
+    (4, 1, '2026-08-22 09:45:00', 'Confirmed', 'CT10K002'),
+
+    (4, 5, '2026-08-23 14:20:00', 'Confirmed', 'CTMAR001');
+GO
+
+
+/* =========================================================
+   13. INSERT RESULTS
+   ========================================================= */
+
+INSERT INTO Results
+    (EntryID, FinishTime, Position, AveragePace, ResultDate)
+VALUES
+    (1, '00:52:30', 24, 5.25, '2026-10-10'),
+
+    (3, '01:02:15', 56, 6.23, '2026-10-10');
+GO
