@@ -188,3 +188,88 @@ CREATE TABLE Results
 GO
 
 
+INSERT INTO Users
+    (FullName, Email, PasswordHash, Role)
+VALUES
+    ('John Smith',
+     'john@raceday.co.za',
+     'HASHED_PASSWORD_001',
+     'Organiser'),
+
+    ('Sarah Williams',
+     'sarah@raceday.co.za',
+     'HASHED_PASSWORD_002',
+     'Organiser'),
+
+    ('Michael Adams',
+     'michael@email.com',
+     'HASHED_PASSWORD_003',
+     'Participant'),
+
+    ('Emma Brown',
+     'emma@email.com',
+     'HASHED_PASSWORD_004',
+     'Participant');
+GO
+
+
+/* =========================================================
+   9. INSERT ROUTES
+   ========================================================= */
+
+INSERT INTO Routes
+    (RouteName, Description, DistanceKM, StartPoint, FinishPoint)
+VALUES
+    ('Cape Town 10K Route',
+     'Scenic city route suitable for a 10 kilometre race.',
+     10.00,
+     'Green Point',
+     'Green Point'),
+
+    ('Cape Town Half Marathon Route',
+     'Half marathon route through the Cape Town area.',
+     21.10,
+     'Sea Point',
+     'Cape Town Stadium'),
+
+    ('Cape Town Marathon Route',
+     'Full marathon route around Cape Town.',
+     42.20,
+     'Woodstock',
+     'Green Point');
+GO
+
+
+/* =========================================================
+   10. INSERT EVENTS
+   Minimum required: 3 Events
+   ========================================================= */
+
+INSERT INTO Events
+    (OrganizerID, RouteID, EventName, EventDate, StartTime,
+     Venue, WeatherLocation)
+VALUES
+    (1,
+     1,
+     'Cape Town 10K Challenge',
+     '2026-10-10',
+     '07:00:00',
+     'Green Point',
+     'Cape Town'),
+
+    (1,
+     2,
+     'Cape Town Half Marathon',
+     '2026-11-15',
+     '06:30:00',
+     'Sea Point',
+     'Cape Town'),
+
+    (2,
+     3,
+     'Cape Town Full Marathon',
+     '2026-12-06',
+     '06:00:00',
+     'Woodstock',
+     'Cape Town');
+GO
