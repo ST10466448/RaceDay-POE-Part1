@@ -319,3 +319,84 @@ VALUES
 
     (3, '01:02:15', 56, 6.23, '2026-10-10');
 GO
+
+
+SELECT * FROM Users;
+
+SELECT * FROM Routes;
+
+SELECT * FROM Events;
+
+SELECT * FROM EventCategories;
+
+SELECT * FROM Entries;
+
+SELECT * FROM Results;
+GO
+
+
+/* =========================================================
+   15. DISPLAY COMPLETE RACEDAY INFORMATION
+   ========================================================= */
+
+SELECT
+    e.EventName,
+    e.EventDate,
+    e.StartTime,
+    r.RouteName,
+    ec.CategoryName,
+    ec.DistanceKM,
+    ec.EntryFee
+FROM Events e
+INNER JOIN Routes r
+    ON e.RouteID = r.RouteID
+INNER JOIN EventCategories ec
+    ON e.EventID = ec.EventID
+ORDER BY e.EventDate;
+GO
+
+
+/* =========================================================
+   16. DISPLAY PARTICIPANT ENTRIES
+   ========================================================= */
+
+SELECT
+    u.FullName AS Participant,
+    e.EventName,
+    ec.CategoryName,
+    en.RaceNumber,
+    en.EntryStatus
+FROM Entries en
+INNER JOIN Users u
+    ON en.ParticipantID = u.UserID
+INNER JOIN EventCategories ec
+    ON en.CategoryID = ec.CategoryID
+INNER JOIN Events e
+    ON ec.EventID = e.EventID
+ORDER BY e.EventDate;
+GO
+
+
+/* =========================================================
+   17. DISPLAY RESULTS
+   ========================================================= */
+
+SELECT
+    u.FullName AS Participant,
+    e.EventName,
+    ec.CategoryName,
+    en.RaceNumber,
+    res.FinishTime,
+    res.Position,
+    res.AveragePace
+FROM Results res
+INNER JOIN Entries en
+    ON res.EntryID = en.EntryID
+INNER JOIN Users u
+    ON en.ParticipantID = u.UserID
+INNER JOIN EventCategories ec
+    ON en.CategoryID = ec.CategoryID
+INNER JOIN Events e
+    ON ec.EventID = e.EventID
+ORDER BY res.Position;
+GO
