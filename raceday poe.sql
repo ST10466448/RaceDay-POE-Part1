@@ -1,0 +1,190 @@
+USE master;
+GO
+
+IF DB_ID('RaceDayDB') IS NOT NULL
+BEGIN
+    ALTER DATABASE RaceDayDB
+    SET SINGLE_USER
+    WITH ROLLBACK IMMEDIATE;
+
+    DROP DATABASE RaceDayDB;
+END
+GO
+
+CREATE DATABASE RaceDayDB;
+GO
+
+USE RaceDayDB;
+GO
+
+
+/* =========================================================
+   2. CREATE USERS TABLE
+   ========================================================= */
+
+CREATE TABLE Users
+(
+    UserID INT IDENTITY(1,1) PRIMARY KEY,
+
+    FullName VARCHAR(100) NOT NULL,
+
+    Email VARCHAR(150) NOT NULL UNIQUE,
+
+    PasswordHash VARCHAR(255) NOT NULL,
+
+    Role VARCHAR(20) NOT NULL
+        CHECK (Role IN ('Organiser', 'Participant')),
+
+    DateCreated DATETIME NOT NULL
+        DEFAULT GETDATE()
+);
+GO
+
+
+/* =========================================================
+   3. CREATE ROUTES TABLE
+   ========================================================= */
+
+CREATE TABLE Routes
+(
+    RouteID INT IDENTITY(1,1) PRIMARY KEY,
+
+    RouteName VARCHAR(150) NOT NULL,
+
+    Description VARCHAR(500),
+
+    DistanceKM DECIMAL(6,2) NOT NULL
+        CHECK (DistanceKM > 0),
+
+    StartPoint VARCHAR(150) NOT NULL,
+
+    FinishPoint VARCHAR(150) NOT NULL
+);
+GO
+
+
+/* =========================================================
+   4. CREATE EVENTS TABLE
+   ========================================================= */
+
+CREATE TABLE Events
+(
+    EventID INT IDENTITY(1,1) PRIMARY KEY,
+
+    OrganizerID INT NOT NULL,
+
+    RouteID INT NOT NULL,
+
+    EventName VARCHAR(150) NOT NULL,
+
+    EventDate DATE NOT NULL,
+
+    StartTime TIME NOT NULL,
+
+    Venue VARCHAR(150) NOT NULL,
+
+    WeatherLocation VARCHAR(150),
+
+    CONSTRAINT FK_Events_Users
+        FOREIGN KEY (OrganizerID)
+        REFERENCES Users(UserID),
+
+    CONSTRAINT FK_Events_Routes
+        FOREIGN KEY (RouteID)
+        REFERENCES Routes(RouteID)
+);
+GO
+
+
+/* =========================================================
+   5. CREATE EVENT CATEGORIES TABLE
+   ========================================================= */
+
+CREATE TABLE EventCategories
+(
+    CategoryID INT IDENTITY(1,1) PRIMARY KEY,
+
+    EventID INT NOT NULL,
+
+    CategoryName VARCHAR(100) NOT NULL,
+
+    DistanceKM DECIMAL(6,2) NOT NULL
+        CHECK (DistanceKM > 0),
+
+    EntryFee DECIMAL(10,2) NOT NULL
+        CHECK (EntryFee >= 0),
+
+    MaxParticipants INT NOT NULL
+        CHECK (MaxParticipants > 0),
+
+    CONSTRAINT FK_EventCategories_Events
+        FOREIGN KEY (EventID)
+        REFERENCES Events(EventID)
+);
+GO
+
+
+/* =========================================================
+   6. CREATE ENTRIES TABLE
+   ========================================================= */
+
+CREATE TABLE Entries
+(
+    EntryID INT IDENTITY(1,1) PRIMARY KEY,
+
+    ParticipantID INT NOT NULL,
+
+    CategoryID INT NOT NULL,
+
+    EntryDate DATETIME NOT NULL
+        DEFAULT GETDATE(),
+
+    EntryStatus VARCHAR(30) NOT NULL
+        DEFAULT 'Confirmed'
+        CHECK (EntryStatus IN
+        ('Pending', 'Confirmed', 'Cancelled')),
+
+    RaceNumber VARCHAR(20),
+
+    CONSTRAINT FK_Entries_Users
+        FOREIGN KEY (ParticipantID)
+        REFERENCES Users(UserID),
+
+    CONSTRAINT FK_Entries_EventCategories
+        FOREIGN KEY (CategoryID)
+        REFERENCES EventCategories(CategoryID),
+
+    CONSTRAINT UQ_Entries_RaceNumber
+        UNIQUE (RaceNumber)
+);
+GO
+
+
+/* =========================================================
+   7. CREATE RESULTS TABLE
+   ========================================================= */
+
+CREATE TABLE Results
+(
+    ResultID INT IDENTITY(1,1) PRIMARY KEY,
+
+    EntryID INT NOT NULL UNIQUE,
+
+    FinishTime TIME NOT NULL,
+
+    Position INT NOT NULL
+        CHECK (Position > 0),
+
+    AveragePace DECIMAL(6,2)
+        CHECK (AveragePace > 0),
+
+    ResultDate DATE NOT NULL
+        DEFAULT CAST(GETDATE() AS DATE),
+
+    CONSTRAINT FK_Results_Entries
+        FOREIGN KEY (EntryID)
+        REFERENCES Entries(EntryID)
+);
+GO
+
+
