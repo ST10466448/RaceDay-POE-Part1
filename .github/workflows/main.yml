@@ -1,0 +1,23 @@
+name: RaceDay CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check RaceDay files
+        run: |
+          echo "RaceDay project files:"
+          ls -la
+          echo "CI workflow completed successfully."
